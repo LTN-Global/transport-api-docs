@@ -1,0 +1,18 @@
+ordering:
+- Introduction
+- Guides
+- How To
+- API Reference
+- Resources
+
+folders:
+  
+  Guides:
+    ordering:
+    - Getting Started
+    - Authorization
+
+  How To:
+    ordering:
+    - Refresh Token
+    - How To Example
