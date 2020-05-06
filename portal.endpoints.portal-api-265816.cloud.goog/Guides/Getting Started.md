@@ -10,18 +10,20 @@ The Transport API departs from some of the common conventions of gRPC + proto3 A
 ## Resource Fields with Special Values and Field Masks
 
 The Transport API handles resource fields that may have a special value differently than normal. This concept is often referred to as 
-[**"nullability"**](https://en.wikipedia.org/wiki/Nullable_type).
+[**"nullability."**](https://en.wikipedia.org/wiki/Nullable_type)
 
 For example, a typical API might specify such a field in the following manner:
 
-    import "google/protobuf/wrappers.proto"
+```protobuf    
+import "google/protobuf/wrappers.proto"
 
-    message User
-    {
-        string                      user_id  = 1;
-        repeated string             comments = 2;
-        google.protobuf.StringValue nickname = 3;  // can be unknown
-    }
+message User
+{
+    string                      user_id  = 1;
+    repeated string             comments = 2;
+    google.protobuf.StringValue nickname = 3;  // can be unknown
+}
+```
 
 Then the presence or absence of the nickname submessage can be used to indicate, respectively, whether a User resource has a normal or
 special value for its nickname.
