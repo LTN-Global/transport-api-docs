@@ -37,13 +37,15 @@ operations that operate on or return only partial resources. For example, an upd
 fields. Because field presence is already being used to indicate whether a field has a normal or special value, such operations must 
 explicitly re-specify which fields should **actually** be operated on and which should be entirely ignored.
 
-    import "google/protobuf/field_mask.proto"
+```protobuf
+import "google/protobuf/field_mask.proto"
 
-    message UpdateUserRequest
-    {
-        User      user       = 1;
-        FieldMask field_mask = 2;  // explicitly specifies the field names that this request is updating
-    }
+message UpdateUserRequest
+{
+    User      user       = 1;
+    FieldMask field_mask = 2;  // explicitly specifies the field names that this request is updating
+}
+```
 
 This approach has several drawbacks:
 
@@ -74,14 +76,16 @@ Second, for fields that can have a special value, we allow them to be explicitly
 Taken together, this means that a typical field in a protobuf representation of an underlying resource can be in one of three states: 
 unspecified, specified with a normal value, or specified as NULL / unknown. We accomplish this by abusing the oneof feature of proto3:
 
-    import "google/protobuf/struct.proto"
+```protobuf
+import "google/protobuf/struct.proto"
 
-    message User
-    {
-        oneof user_id_     { string user_id  = 1; }
-        repeated             string comments = 2; bool                      comments_set  = 3;
-        oneof nickname_    { string nickname = 4; google.protobuf.NullValue nickname_null = 5; }  // can be unknown
-    }
+message User
+{
+    oneof user_id_     { string user_id  = 1; }
+    repeated             string comments = 2; bool                      comments_set  = 3;
+    oneof nickname_    { string nickname = 4; google.protobuf.NullValue nickname_null = 5; }  // can be unknown
+}
+```
 
 Wrapping scalars in oneofs allows their presence / absence to be unambiguously determined, even if they were set with the default value 
 for that type before it was serialized and then deserialized. For nullable fields, we add another field inside the oneof, which allow it 
@@ -104,21 +108,25 @@ with "\_set" appended.
 This approach allows us to deal with field masks quite differently. Because every field is now truly optional and by default 
 unspecified, partial updates can now simply specify the fields they want to update and leave the rest unspecified.
 
-    message UpdateUserRequest
-    {
-        User user = 1;  // only specifies the resource id and the other fields to update with their new values
-        ...             // other common fields elided to reduce confusion; keep reading below for details
-    }
+```protobuf
+message UpdateUserRequest
+{
+    User user = 1;  // only specifies the resource id and the other fields to update with their new values
+    ...             // other common fields elided to reduce confusion; keep reading below for details
+}
+```
 
 Get and list operations that only want partial results can specify a field mask using the resource itself with any value specified
 for the fields they want returned.
 
-    message GetUserRequest
-    {
-        string user_id         = 1;
-        User   field_mask      = 2;  // specifies the fields to return or not to return, depending on field_mask_pstv
-        bool   field_mask_pstv = 3;
-    }
+```protobuf
+message GetUserRequest
+{
+    string user_id         = 1;
+    User   field_mask      = 2;  // specifies the fields to return or not to return, depending on field_mask_pstv
+    bool   field_mask_pstv = 3;
+}
+```
 
 The field_mask_pstv boolean indicates whether field_mask is a positive or negative field mask. A positive field mask specifies the fields
 that should be returned, while a negative field mask indicates the fields that should not be returned. By default, the field_mask itself 
@@ -130,19 +138,21 @@ Returning to update operations from above, we allow a field mask to be specified
 **only filtering the returned result** and not specifying which fields to update! So, the meaning of a field mask here is different than 
 what a field mask is typically used for in an update operation in other APIs! The same functionality is present for create operations too.
 
-    message CreateUserRequest
-    {
-        User user            = 1;  // unspecified fields will get their default value (e.g. - NULL)
-        User field_mask      = 2;  // specifies the fields to return or not to return, depending on field_mask_pstv
-        bool field_mask_pstv = 3;
-    }
-    
-    message UpdateUserRequest
-    {
-        User user            = 1;  // only specifies the resource id and the other fields to update with their new values
-        User field_mask      = 2;  // specifies the fields to return or not to return, depending on field_mask_pstv
-        bool field_mask_pstv = 3;
-    }
+```protobuf
+message CreateUserRequest
+{
+    User user            = 1;  // unspecified fields will get their default value (e.g. - NULL)
+    User field_mask      = 2;  // specifies the fields to return or not to return, depending on field_mask_pstv
+    bool field_mask_pstv = 3;
+}
+
+message UpdateUserRequest
+{
+    User user            = 1;  // only specifies the resource id and the other fields to update with their new values
+    User field_mask      = 2;  // specifies the fields to return or not to return, depending on field_mask_pstv
+    bool field_mask_pstv = 3;
+}
+```
 
 ## List Operations
 
