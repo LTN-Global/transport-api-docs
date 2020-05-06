@@ -22,15 +22,15 @@ Upon successful authentication, the API will return a JWT bearer token string th
 If you try to make a request after your token has expired (one hour), you will get the following error letting you know you have to make a request for another token.
 
     {
-     "code": 16,
-     "message": "JWT validation failed: TIME_CONSTRAINT_FAILURE",
-     "details": [
-      {
-       "@type": "type.googleapis.com/google.rpc.DebugInfo",
-       "stackEntries": [],
-       "detail": "auth"
-      }
-     ]
+        "code": 16,
+        "message": "JWT validation failed: TIME_CONSTRAINT_FAILURE",
+        "details": [
+            {
+                "@type": "type.googleapis.com/google.rpc.DebugInfo",
+                "stackEntries": [],
+                "detail": "auth"
+            }
+        ]
     }
 
 ## API Access Control
