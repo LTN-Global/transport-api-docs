@@ -5,11 +5,10 @@ service specification. It also exposes a REST interface through [transcoding](ht
 
 ## Transport API Design Considerations
 
-### Resource Fields with Unknown Values and Field Masks
+### Resource Fields with Special Values and Field Masks
 
 The Transport API departs from some of the common conventions of gRPC + proto3 APIs. In particular, it varies on how it handles
-resource fields that may have an unknown value.  This concept is often referred to as **"nullability"** because relational databases 
-typically represent an unknown value as NULL and implement ternary logic.
+resource fields that may have a special value.  This concept is often referred to as [**"nullability"**](https://en.wikipedia.org/wiki/Nullable_type).
 
 For example, a typical API might specify such a field in the following manner:
 
