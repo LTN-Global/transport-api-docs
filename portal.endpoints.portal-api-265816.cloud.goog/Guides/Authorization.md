@@ -1,15 +1,12 @@
 # Transport API Authorization
----
 
 ## API Key
----
 
 To access any portion of the Transport API, a request must [specify a valid API key](https://cloud.google.com/endpoints/docs/grpc/restricting-api-access-with-api-keys#calling_an_api_using_an_api_key).
 
 Please contact an administrator in the Transport division to obtain an API key.
 
 ## API Authentication
----
 
 To access most any portion of the Transport API, a request must also specify a valid JWT bearer token. 
 
@@ -37,6 +34,5 @@ If you try to make a request after your token has expired (one hour), you will g
     }
 
 ## API Access Control
----
 
 Access to specific API resources and procedures is controlled by your user login specified in your JWT bearer token. Currently, only users in the NOC account are authorized to use this API.
