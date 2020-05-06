@@ -67,7 +67,7 @@ operations well.
 First, in the protobuf representation of actual resources (as opposed to request-response helper messages) we made every field truly 
 optional. Therefore, field presence or absence in a resource's message has no intrinsic meaning in and of itself. If a field is not 
 present in a the protobuf representation of a resource, then that says nothing about whether the underlying resource has a known value for 
-that field or not.  It only means that this message says nothing about that field of the resource.
+that field or not.  It only means that this message says nothing about that field of the underlying resource.
 
 Second, for fields that can have an unknown value, we allow them to be explicitly set to a NULL value.
 
