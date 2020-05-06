@@ -7,7 +7,7 @@ service specification. It also exposes a REST interface through [transcoding](ht
 
 ### Resource Fields with Unknown Values and Field Masks
 
-The Transport API departs from some of the common conventions of gRPC + proto3 interfaces. In particular, it varies on how it handles
+The Transport API departs from some of the common conventions of gRPC + proto3 APIs. In particular, it varies on how it handles
 resource fields that may have an unknown value.  This concept is often referred to as **"nullability"** because relational databases 
 typically represent an unknown value as NULL and implement ternary logic.
 
