@@ -1,14 +1,15 @@
-# Getting Started
+# Overview
 
 The Transport API is a [gRPC](https://grpc.io/) interface with a [Protocol Buffers v3](https://developers.google.com/protocol-buffers)
 service specification. It also exposes a REST interface through [transcoding](https://cloud.google.com/endpoints/docs/grpc/transcoding).
 
-## Transport API Design Considerations
+# Transport API Design Considerations
 
-### Resource Fields with Special Values and Field Masks
+The Transport API departs from some of the common conventions of gRPC + proto3 APIs.
 
-The Transport API departs from some of the common conventions of gRPC + proto3 APIs. In particular, it varies on how it handles
-resource fields that may have a special value. This concept is often referred to as 
+## Resource Fields with Special Values and Field Masks
+
+The Transport API handles resource fields that may have a special value differently than normal. This concept is often referred to as 
 [**"nullability"**](https://en.wikipedia.org/wiki/Nullable_type).
 
 For example, a typical API might specify such a field in the following manner:
@@ -26,15 +27,12 @@ Then the presence or absence of the nickname submessage can be used to indicate,
 special value for its nickname.
 
 Wrapping the nickname string into a StringValue is necessary because proto3 does not support field absence for scalar types. Instead,
-scalar types are always present with some normal value. In general, the special value cannot be specified as some fixed normal value
-for a scalar type because what values are outside the valid range of a field vary from field to field. For example, an empty string could 
-be used by certain fields to indicate it is special, while an empty string could be a perfectly valid value for another string field. 
-Wrapping the value into one of the well known wrapper type messages allows for field presence / absence to be used to indicate a special 
-value and to unambiguously determined.
+scalar types are effectively always present with some normal value. Wrapping the value into one of the well known wrapper type messages 
+allows for field absence to be used to indicate a special value and to be unambiguously determined.
 
-Unfortunately, this approach that leverages field presence for nullability conflicts with other commonly supported concepts such as 
+Unfortunately, this approach conflicts with other commonly supported concepts such as 
 operations that operate on or return only partial resources. For example, an update that only seeks to update some subset of a resource's 
-fields. Because field presence is already being used to indicate whether a field has an unknown value or not, such operations must 
+fields. Because field presence is already being used to indicate whether a field has a normal or special value, such operations must 
 explicitly re-specify which fields should **actually** be operated on and which should be entirely ignored.
 
     import "google/protobuf/field_mask.proto"
@@ -45,31 +43,31 @@ explicitly re-specify which fields should **actually** be operated on and which 
         FieldMask field_mask = 2;  // explicitly specifies the field names that this request is updating
     }
 
-This approach is bad for many reasons:
+This approach has several drawbacks:
 
-* It encodes field names, rather than just field numbers, into serializations. This means that a field's name in the protobuf 
+* It encodes field names, rather than just field numbers, into serializations. This means that field names in the protobuf 
 and auto-generated code can never change in the future without breaking backwards compatability with older versions.
 
 * Because field names are relatively verbose compared to field numbers, this heads back in the direction of JSON by encoding 
-inefficient, verbose, human readable field specifications.
+redundant, inefficient, verbose, human readable field specifications.
 
 * FieldMasks come with restrictions such as only one repeated field is allowed to be specified and it must be in the last 
-position of the FieldMask. For update operations, a repeated field will append to the existing list.
+position of the FieldMask. For update operations, a repeated field will append onto the existing list.
 
 * Field mask negation is not directly supported, except that the absence of a field mask is interpreted to mean a field 
 mask with all fields specified.
 
-* A JSON encoding of a FieldMask must convert the specified field names to/from camel case.
+* A JSON encoding of a FieldMask (e.g. - for REST interface) must convert the specified field names to/from camel case.
 
 For all of these reasons, the Transport API took a different approach to support the concepts of nullability and partial resource 
 operations well.
 
 First, in the protobuf representation of actual resources (as opposed to request-response helper messages) we made every field truly 
 optional. Therefore, field presence or absence in a resource's message has no intrinsic meaning in and of itself. If a field is not 
-present in a the protobuf representation of a resource, then that says nothing about whether the underlying resource has a known value for 
-that field or not.  It only means that this message says nothing about that field of the underlying resource.
+present in a the protobuf representation of a resource, then that says nothing about whether the underlying resource has a normal or  
+speicial value for that field.  It only means that this message says nothing about that field of the underlying resource.
 
-Second, for fields that can have an unknown value, we allow them to be explicitly set to a NULL value.
+Second, for fields that can have a special value, we allow them to be explicitly set to a NULL value.
 
 Taken together, this means that a typical field in a protobuf representation of an underlying resource can be in one of three states: 
 unspecified, specified with a normal value, or specified as NULL / unknown. We accomplish this by abusing the oneof feature of proto3:
@@ -144,6 +142,6 @@ what a field mask is typically used for in an update operation in other APIs! Th
         bool field_mask_pstv = 3;
     }
 
-### List Updates
+## List Operations
 
 
