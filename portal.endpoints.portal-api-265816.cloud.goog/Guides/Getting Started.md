@@ -8,7 +8,8 @@ service specification. It also exposes a REST interface through [transcoding](ht
 ### Resource Fields with Special Values and Field Masks
 
 The Transport API departs from some of the common conventions of gRPC + proto3 APIs. In particular, it varies on how it handles
-resource fields that may have a special value.  This concept is often referred to as [**"nullability"**](https://en.wikipedia.org/wiki/Nullable_type).
+resource fields that may have a special value. This concept is often referred to as 
+[**"nullability"**](https://en.wikipedia.org/wiki/Nullable_type).
 
 For example, a typical API might specify such a field in the following manner:
 
@@ -21,15 +22,15 @@ For example, a typical API might specify such a field in the following manner:
         google.protobuf.StringValue nickname = 3;  // can be unknown
     }
 
-Then the presence or absence of the nickname submessage can be used to indicate, respectively, whether a User resource has a known value 
-for its nickname or if it is unknown.
+Then the presence or absence of the nickname submessage can be used to indicate, respectively, whether a User resource has a normal or
+special value for its nickname.
 
-Wrapping the nickname string into a StringValue is necessary because proto3 does not truly support field absence for scalar types.
-Instead, scalar types are always present with some value. As an optimization, if a scalar has the default value for that type, then proto3 
-will not serialize that field. This optimization makes it impossible to determine after deserialization if the field was never explicitly 
-set or if it was explicitly set but to the default value before it was serialized. Unfortunately, the default value of scalars is often a 
-perfectly valid value for the field, so checking against the default value cannot be generally used to indicate an unknown value. Wrapping 
-the value into one of the well known wrapper type messages allows for field presence / absence to be unambiguously determined.
+Wrapping the nickname string into a StringValue is necessary because proto3 does not support field absence for scalar types. Instead,
+scalar types are always present with some normal value. In general, the special value cannot be specified as some fixed normal value
+for a scalar type because what values are outside the valid range of a field vary from field to field. For example, an empty string could 
+be used by certain fields to indicate it is special, while an empty string could be a perfectly valid value for another string field. 
+Wrapping the value into one of the well known wrapper type messages allows for field presence / absence to be used to indicate a special 
+value and to unambiguously determined.
 
 Unfortunately, this approach that leverages field presence for nullability conflicts with other commonly supported concepts such as 
 operations that operate on or return only partial resources. For example, an update that only seeks to update some subset of a resource's 
