@@ -11,7 +11,7 @@ The Transport API departs from some of the common conventions of gRPC + proto3 A
 
 ## Unknown Values and Field Masks
 
-The Transport API handles fields whose value may be unknown differently than usual. 
+The Transport API handles fields whose value may be unknown and field masks differently than usual. 
 
 ### Problems with the Typical Design
 
@@ -24,17 +24,17 @@ message User
 {
     string                      user_id  = 1;
     repeated string             comments = 2;
-    google.protobuf.StringValue nickname = 3;  // nickname may be absent indicating that it is unknown
+    google.protobuf.StringValue nickname = 3;  // may be absent indicating that it is unknown
 }
 ```
 
 Wrapping `nickname` into a StringValue is necessary because proto3 does not truly support field presence / absence for scalar types. In 
 proto3, a regular scalar is considered absent if it has the default value regardless of whether it was explicitly set or not. 
-Unfortunately, oftentimes the default value of a scalar (e.g. - 0) is a perfectly valid value for the field and can't also be used to 
+Oftentimes, the default value of a scalar (e.g. - 0) is a perfectly valid value for the field and can't also be used to 
 indicate that it is unknown. Wrapping the value into one of the well known wrapper type messages allows for field absence to be 
 unambiguously determined, regardless of value, which can be used to indicate that the field's value is unknown.
 
-Unfortunately again, this approach conflicts with other common concepts such as operating on or returning partial resources. For example, 
+Unfortunately, this approach conflicts with other common concepts such as operating on or returning partial resources. For example, 
 an update that only seeks to update some subset of a resource's fields. Because field absence is already being used to indicate unknown 
 values, such operations must explicitly re-specify which fields should **actually** be considered and which should be entirely ignored.
 
@@ -44,7 +44,7 @@ import "google/protobuf/field_mask.proto"
 message UpdateUserRequest
 {
     User      user       = 1;
-    FieldMask field_mask = 2;  // explicitly specifies the field names that this request is actually updating
+    FieldMask field_mask = 2;  // the field names that this request is actually updating
 }
 ```
 
@@ -118,12 +118,12 @@ default unspecified, partial updates can now simply specify the fields they want
 ```protobuf
 message UpdateUserRequest
 {
-    User user = 1;  // only specifies the resource name and the other fields to set with their new values
-    ...             // other common fields temporarily elided to reduce confusion; keep reading below for details
+    User user = 1;  // specifies the resource name and a subset of the other fields to set with their new values
+    ...             // temporarily elided to reduce confusion; keep reading below for details
 }
 ```
 
-Get and list operations that only want partial results can specify a field mask using the resource itself with any value specified
+Get and list operations that only want partial results can specify a field mask using the resource itself with any values specified
 for the fields they want returned.
 
 ```protobuf
@@ -159,7 +159,7 @@ message CreateUserRequest
 
 message UpdateUserRequest
 {
-    User user            = 1;  // only specifies the resource name and the other fields to set with their new values
+    User user            = 1;  // specifies the resource name and a subset of the other fields to set with their new values
     User field_mask      = 2;  // specifies the fields to return or not to return, depending on field_mask_pstv
     bool field_mask_pstv = 3;
 }
@@ -191,7 +191,7 @@ message ListUsersResponse
 
 The `filter` field is a string that specifies a restricted [SQL WHERE](https://en.wikipedia.org/wiki/Where_(SQL)) clause to return a 
 reduced result set. The "WHERE" is implied and must not be specified in the string. All the basic logical and mathematical operators and 
-predicates on singular (i.e. - non-repeated) resource fields are supported (e.g. - =, <>, ==, !=, >, >=, <, <=, +, -, \*, /, %, IN, 
+predicates on non-repeated resource fields are supported (e.g. - =, <>, ==, !=, >, >=, <, <=, +, -, \*, /, %, IN, 
 BETWEEN, LIKE, MATCH, REGEXP, IS NULL, IS NOT NULL, etc.) in the syntax.  Function calls (e.g. - COUNT(\*)), sub-selects, comments, early 
 termination, and other SQL operations are not allowed. Field names must not be quoted. Operations on repeated fields are currently not 
 supported and using them will cause an error.
