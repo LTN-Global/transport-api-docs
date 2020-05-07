@@ -98,9 +98,9 @@ message User
 ```
 
 Wrapping scalars in oneofs allows them to be truly optional. Their field presence or absence can be unambiguously determined using the 
-"which one of" method on the oneof. For scalars that can have an unknown value, we add another field inside its oneof, which allows it to 
-be explicitly specified as NULL. Iterations over a protobuf's present fields will work as expected: specified fields (or their null 
-counterparts) will be in the iteration, while unspecified fields will not be.
+"which one of" method on the oneof, regardless of value. For scalars that can have an unknown value, we add another field inside its 
+oneof, which allows it to be explicitly specified as NULL. Iterations over a protobuf's present fields will work as expected: specified 
+fields (or their null counterparts) will be in the iteration, while unspecified fields will not be.
 
 Repeated fields cannot exist inside oneofs. For repeated fields, we instead add an explicit boolean to disambiguate if an empty list 
 indicates whether the field is being specified (true) or not (false). If the list is not empty, then it is specified, *regardless of the 
