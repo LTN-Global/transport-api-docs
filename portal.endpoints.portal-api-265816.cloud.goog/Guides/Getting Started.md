@@ -15,7 +15,7 @@ The Transport API handles fields whose value may be unknown differently than usu
 
 ### Problems with the Typical Design
 
-A typical API might specify a field whose value can be unknown in the following manner:
+A typical API might specify a field whose value can be unknown through field absence in the following manner:
 
 ```protobuf    
 import "google/protobuf/wrappers.proto"
