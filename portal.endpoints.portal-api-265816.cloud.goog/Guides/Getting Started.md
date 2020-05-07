@@ -66,13 +66,12 @@ mask with all fields specified.
 * A JSON encoding of a FieldMask (e.g. - for REST interface) must convert the specified field names to / from camel case.
 
 For all of these reasons, the Transport API took a different approach to support the concepts of nullability and partial resource 
-operations well.
+operations.
 
 First, in the protobuf representation of actual resources (as opposed to request-response helper messages) we made every field truly 
 optional. Therefore, a field being absent in a resource's message has no intrinsic meaning in and of itself. If a field is absent in 
-the protobuf representation of a resource, then that says nothing about whether the underlying resource actually has a normal or  
-speicial value for that field. The absence only means that *this* protobuf message says nothing about that field of the underlying 
-resource.
+the protobuf representation of a resource, then that says nothing about whether the underlying resource actually has a normal or special 
+value for that field. The absence only means that *this* protobuf message says nothing about that field of the underlying resource.
 
 Second, for fields that can have a special value, we allow them to be explicitly set to a special NULL value.
 
