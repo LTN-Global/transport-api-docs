@@ -207,8 +207,8 @@ result set. The "ORDER BY" is implied and must not be specified in the string. O
 with an optional "ASC" or "DESC" operator appended.
 
 The `offset`, `page_size`, and `page_token` fields control pagination of the returned result set. `offset` controls at what position 
-offset from the beginning of the overall result set the returned result set will begin. `offset` should be properly updated by the caller 
-for repeated calls on the same overall result set. `page_size` controls how large a returned result set can be at most. `page_token` 
-allows an overall result set to be iterated over through repeated calls using the same `filter` and `order_by` fields.  On the initial 
-call, `page_token` must be an empty string.  Then each repeated call must use the `next_page_token` returned from the previous call.  When 
-`next_page_token` returns as an empty string, then the overall result set has been exhausted.
+offset from the beginning of the overall result set the returned result sets will begin. `page_size` controls how large a returned result 
+set can be at most. `page_token` allows an overall result set to be iterated over through repeated calls using the same other parameters. 
+On the initial call, `page_token` must be an empty string.  Then each repeated call must use the `next_page_token` returned from the 
+previous call.  When `next_page_token` returns as an empty string, then the overall result set has been exhausted. If the overall result 
+set is no longer available, then the call will return an error.
