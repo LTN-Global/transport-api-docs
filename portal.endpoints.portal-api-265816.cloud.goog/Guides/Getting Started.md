@@ -89,13 +89,11 @@ message User
 }
 ```
 
-Wrapping scalars in oneofs allows their presence / absence to be unambiguously determined. For nullable fields, we add another field 
+Wrapping scalars in oneofs allows their field presence to be unambiguously determined. For nullable fields, we add another field 
 inside the oneof, which allows it to be explicitly specified as NULL.
 
-Field presence / absence can then be explicitly tested in code through the "which one of" method on the oneof. Alternatively, field 
-presence / absence can be tested using the "has" method on the field **and** its null counterpart (if it exists). Additionally, iterations 
-over the specified fields will work as expected: specified fields (or their null counterpart) will be in the iteration, while unspecified 
-fields will not be.
+Field presence can then be explicitly tested in code through the "which one of" method on the oneof. Iterations over the specified fields 
+will work as expected: specified fields (or their null counterpart) will be in the iteration, while unspecified fields will not be.
 
 Repeated fields cannot exist inside oneofs. For repeated fields, we instead use an explicit boolean to disambiguate if an empty list 
 indicates whether the field is being specified or not. If the list is not empty, then it is specified, *regardless of the value of the 
@@ -133,13 +131,13 @@ message GetUserRequest
 The `field_mask_pstv` boolean indicates whether `field_mask` is a positive or negative field mask. A positive field mask specifies the 
 fields that should be returned, while a negative field mask indicates the fields that should not be returned. By default, the `field_mask` 
 itself will not be specified (interpreted the same as a default / empty field_mask) and `field_mask_pstv` will be false, therfore, all the 
-fields of the resource will be returned. Together, `field_mask` and `field_mask_pstv`, can be easily manipulated to filter the results for 
+fields of the resource will be returned. Together, `field_mask` and `field_mask_pstv` can be easily manipulated to filter the results for 
 only the fields in which the caller is interested.
 
 Returning to update operations discussed above, we allow a field mask to be specified for updates as well. However, be aware that this 
-field mask is **only filtering the returned result** and **NOT** specifying which fields to update! So, the meaning of a field mask here 
+field mask is **only filtering the *returned result*** and **NOT** specifying which fields to update! So, the meaning of a field mask here 
 is **different** than what a field mask is typically used for in update operations in other APIs! The same filtering functionality is 
-present for create operations too.
+provided for create operations too.
 
 ```protobuf
 message CreateUserRequest
@@ -182,13 +180,23 @@ message ListUsersResponse
 ```
 
 The `filter` field is a string that specifies a restricted [SQL WHERE](https://en.wikipedia.org/wiki/Where_(SQL)) clause to return a 
-reduced result set. The "WHERE" is implied and shouldn't be specified in the string. All the basic logical and mathematical operators and 
-predicates on singular resource fields are supported (e.g. - =, <>, ==, !=, >, >=, <, <=, +, -, \*, /, %, IN, BETWEEN, LIKE, MATCH, 
-REGEXP, IS NULL, IS NOT NULL, etc.) in the syntax.  Function calls (e.g. - COUNT(\*)), sub-selects, comments, early termination, and other 
-SQL operations are disallowed. Field names should not be quoted.
+reduced result set. The "WHERE" is implied and must not be specified in the string. All the basic logical and mathematical operators and 
+predicates on singular (i.e. - non-repeated) resource fields are supported (e.g. - =, <>, ==, !=, >, >=, <, <=, +, -, \*, /, %, IN, 
+BETWEEN, LIKE, MATCH, REGEXP, IS NULL, IS NOT NULL, etc.) in the syntax.  Function calls (e.g. - COUNT(\*)), sub-selects, comments, early 
+termination, and other SQL operations are disallowed. Field names must not be quoted. Operations on epeated fields are currently not 
+supported and using them will cause an error.
 
 For enum fields, values should be represented by the enum name but wrapped in a single quoted string (e.g. - `enum_field = 
 'ENUM_VALUE_NAME'`).
 
 As explained in the previous section, `field_mask` and `field_mask_pstv` filter the fields of the returned result set (i.e. - the contents 
 of each User in the returned `users` field).
+
+The `order_by` field is a string that specifies a restricted [SQL ORDER BY](https://en.wikipedia.org/wiki/Order_by) clause to order a 
+result set. The "ORDER BY" is implied and must not be specified in the string. Only singular (i.e. - non-repeated) fields may be specified
+with an optional "ASC" or "DESC" operator appended.
+
+The `offset`, `page_size`, and `page_token` fields control pagination of the result set. `offset` controls at what position 
+offset from the beginning of the overall result set the returned result set will begin and should be properly updated by the caller for
+repeated calls on the same overall result set. `page_size` controls how large a returned result set can be at most. `page_token` allows an 
+overall result set to be iterated over through repeated calls using the same `filter` and `order_by` fields.
