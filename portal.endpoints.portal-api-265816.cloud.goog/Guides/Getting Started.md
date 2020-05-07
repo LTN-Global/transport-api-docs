@@ -57,7 +57,7 @@ and auto-generated code can never change in the future without breaking backward
 
 * Because field names are relatively verbose compared to field numbers, this heads back in the direction of JSON by encoding 
 redundant, inefficient, verbose, human readable field specifications. It would be far preferable if we could determine which fields
-to update simply by examining `user` instead.
+to update simply by examining `user` instead, but overloading the meaning of field absence prevents this.
 
 * FieldMasks come with restrictions such as only one repeated field is allowed to be specified and it must be in the last 
 position of the FieldMask. For update operations, a repeated field will append onto the existing list.
