@@ -199,4 +199,6 @@ with an optional "ASC" or "DESC" operator appended.
 The `offset`, `page_size`, and `page_token` fields control pagination of the result set. `offset` controls at what position 
 offset from the beginning of the overall result set the returned result set will begin and should be properly updated by the caller for
 repeated calls on the same overall result set. `page_size` controls how large a returned result set can be at most. `page_token` allows an 
-overall result set to be iterated over through repeated calls using the same `filter` and `order_by` fields.
+overall result set to be iterated over through repeated calls using the same `filter` and `order_by` fields.  On the initial call, it
+must be an empty string.  Then each repeated call must use the `next_page_token` returned from the previous call.  When `next_page_token`
+returns as an empty string, then the overall result set has been exhausted.
