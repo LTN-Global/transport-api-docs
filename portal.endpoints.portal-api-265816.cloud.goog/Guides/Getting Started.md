@@ -182,7 +182,14 @@ message ListUsersResponse
 }
 ```
 
-The `filter` field is a string that specifies a restricted SQL WHERE clause to return a reduced result set.
+The `filter` field is a string that specifies a restricted [SQL WHERE](https://en.wikipedia.org/wiki/Where_(SQL)) clause to return a 
+reduced result set. The "WHERE" is implied and shouldn't be specified in the string. All the basic logical and mathematical operators and 
+predicates on singular resource fields are supported (e.g. - =, <>, ==, !=, >, >=, <, <=, +, -, \*, /, %, IN, BETWEEN, LIKE, MATCH, 
+REGEXP, IS NULL, IS NOT NULL, etc.) in the syntax.  Function calls (e.g. - COUNT(\*)), sub-selects, comments, early termination, and other 
+SQL operations are disallowed. Field names should not be quoted.
+
+For enum fields, values should be represented by the enum name but wrapped in a single quoted string (e.g. - `enum_field = 
+'ENUM_VALUE_NAME'`).
 
 As explained in the previous section, `field_mask` and `field_mask_pstv` filter the fields of the returned result set (i.e. - the contents 
 of each User in the returned `users` field).
