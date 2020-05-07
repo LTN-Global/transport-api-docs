@@ -97,8 +97,8 @@ message User
 }
 ```
 
-Wrapping scalars in oneofs allows them to be truly optional. Their field presence or absence can be unambiguously determined using the 
-"which one of" method on the oneof, regardless of value. For scalars that can have an unknown value, we add another field inside its 
+Wrapping scalars in oneofs allows them to be truly optional. Their field presence or absence can be unambiguously determined regardless of 
+value using the "which one of" method on the oneof. For scalars that can have an unknown value, we add another field inside its 
 oneof, which allows it to be explicitly specified as NULL. Iterations over a protobuf's present fields will work as expected: specified 
 fields (or their null counterparts) will be in the iteration, while unspecified fields will not be.
 
