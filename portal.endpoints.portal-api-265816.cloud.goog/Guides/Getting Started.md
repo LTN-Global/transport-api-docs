@@ -196,8 +196,7 @@ BETWEEN, LIKE, MATCH, REGEXP, IS NULL, IS NOT NULL, etc.) in the syntax.  Functi
 termination, and other SQL operations are not allowed. Field names must not be quoted. Operations on repeated fields are currently not 
 supported and using them will cause an error.
 
-For enum fields, values should be represented by the enum name but wrapped in a single quoted string. E.g.: `"enum_field = 
-'ENUM_VALUE'"`.
+For enum fields, values should be represented directly by the enum value's name. E.g.: `"enum_field != ENUM_VALUE"`.
 
 As explained previously, `field_mask` and `field_mask_pstv` filter the fields of the returned result set (e.g. - the contents 
 of each User in the returned `users` field).
