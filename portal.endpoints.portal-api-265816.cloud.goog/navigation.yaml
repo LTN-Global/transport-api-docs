@@ -1,7 +1,6 @@
 ordering:
 - Introduction
 - Guides
-- How To
 - API Reference
 - Resources
 
@@ -11,8 +10,4 @@ folders:
     ordering:
     - Getting Started
     - Authorization
-
-  How To:
-    ordering:
-    - Refresh Token
-    - How To Example
+    
