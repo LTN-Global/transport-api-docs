@@ -3,7 +3,7 @@
 The Transport API is a [gRPC](https://grpc.io/) interface with a [Protocol Buffers v3](https://developers.google.com/protocol-buffers)
 service specification. It also exposes a REST interface through [transcoding](https://cloud.google.com/endpoints/docs/grpc/transcoding).
 
-To get started please read about [authorization](./Authorization).
+To get started please first read the [WARNINGS](./Warnings) and about [authorization](./Authorization).
 
 # Transport API Design Considerations
 
