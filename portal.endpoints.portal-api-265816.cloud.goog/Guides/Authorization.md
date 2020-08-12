@@ -44,10 +44,10 @@ authorized to use this API.
 
 ### Generate a JWT:
 
-    api.txt contains: <API key>
+    api_key.txt contains: x-api-key: <API key>
     login.txt contains: { "username": "<portal username>", "password": "<portal password>" }
 
-    > curl -X POST "https://${hostname}:${hostport}/v1/oauth/token?key=$(cat api.txt)" --data-binary @login.txt
+    > curl -X POST "https://${hostname}:${hostport}/v1/oauth/token" -H @api_key.txt --data-binary @login.txt
 
 Returns:
     
@@ -57,7 +57,7 @@ Returns:
 
 ### Accessing an Endpoint:
 
-    api.txt contains: <API key>
+    api_key.txt contains: x-api-key: <API key>
     jwt.txt contains: Authorization: Bearer <JWT body>
 
-    > curl "https://${hostname}:${hostport}/v1/users/jschultz@ltnglobal.com?key=$(cat api.txt)" -H @jwt.txt
+    > curl "https://${hostname}:${hostport}/v1/users/jschultz@ltnglobal.com" -H @api_key.txt -H @jwt.txt
