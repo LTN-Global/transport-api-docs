@@ -14,7 +14,7 @@ To access most any portion of the Transport API, a request must also specify a v
 To obtain a token, a user must first authenticate themselves to the API using [CreateToken](../../methods/Auth/CreateToken) 
 (or via [REST](../../routes/v1/oauth/token/post)).  Please note that even this request must specify the API key.
 
-The caller must specify a valid Transport login consisting of a username and password. Currently, only users in the NOC 
+The caller must specify a valid Transport login consisting of a user_id and password. Currently, only users in the NOC 
 account are authorized to use this API.
 
 Please contact an administrator in the Transport division to obtain a Transport login in the NOC account.
@@ -45,7 +45,7 @@ authorized to use this API.
 ### Generate a JWT:
 
     api_key.txt contains: x-api-key: <API key>
-    login.txt contains: { "username": "<portal username>", "password": "<portal password>" }
+    login.txt contains: { "user_id": "<portal user_id>", "password": "<portal password>" }
 
     > curl -X POST "https://${hostname}:${hostport}/v1/oauth/token" -H @api_key.txt --data-binary @login.txt
 
